@@ -26,29 +26,27 @@ function callback(res) {
 
   res.on('end', () => {
     cursorTo(process.stdout, 0, null);
-    console.log(`Downloading binary: [${'='.repeat(20)}] 100%`);
+    process.stdout.write(`Downloading binary: [${'='.repeat(20)}] 100%\n`);
   });
 
-  const targetDir = path.resolve(__dirname, 'bin/')
-  if(!existsSync(targetDir)) mkdirSync(targetDir)
+  const targetDir = path.resolve(__dirname, 'bin/');
+  if (!existsSync(targetDir)) mkdirSync(targetDir);
 
   if (process.platform === 'linux') {
     // tarXZ
-    res.pipe(new xz.Decompressor()).pipe(
-      tar.extract({
-        cwd: targetDir,
-        strip: 1,
-        filter: filePath => ['ffmpeg', 'ffprobe'].includes(path.basename(filePath))
-      })
-    );
+    res.pipe(new xz.Decompressor()).pipe(tar.extract({
+      cwd: targetDir,
+      strip: 1,
+      filter: filePath => ['ffmpeg', 'ffprobe'].includes(path.basename(filePath)),
+    }));
   } else {
     // unzip
-    res.pipe(unzip.Parse()).on('entry', entry => {
+    res.pipe(unzip.Parse()).on('entry', (entry) => {
       const bName = path.basename(entry.path);
-      const fName = bName.substr(0, bName.length - path.extname(entry.path).length)
-      if (!['ffmpeg', 'ffprobe', 'ffplay'].includes(fName)) return entry.autodrain()
-      if (!['.exe', ''].includes(path.extname(entry.path))) return entry.autodrain()
-      entry.pipe(createWriteStream(path.resolve(targetDir, bName)))
+      const fName = bName.substr(0, bName.length - path.extname(entry.path).length);
+      if (!['ffmpeg', 'ffprobe', 'ffplay'].includes(fName)) return entry.autodrain();
+      if (!['.exe', ''].includes(path.extname(entry.path))) return entry.autodrain();
+      return entry.pipe(createWriteStream(path.resolve(targetDir, bName)));
     });
   }
 }
