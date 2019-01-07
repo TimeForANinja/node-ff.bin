@@ -4,12 +4,12 @@ Based on [node-ffmpeg-binaries](https://github.com/Hackzzila/node-ffmpeg-binarie
 
 Supported architectures:
 
-Linux | Windows | Mac
------ | ------- | ---
-x64   | x64     | x64
-ia32  | ia32    |
-arm   |         |
-arm64 |         |
+| &#8203; | Linux<br>(ffmpeg and ffprobe) | Windows<br>(ffmpeg, ffprobe & ffplay) | Mac<br>(ffmpeg, ffprobe & ffplay) |
+| ---   | ------- | --- | --- |
+| x64   | ✓ | ✓ | ✓ |
+| ia32  | ✓ | ✓ | &#8203; |
+| arm   | ✓ | &#8203; |&#8203; |
+| arm64 | ✓ | &#8203;| &#8203; |
 
 ## API
 `node-ffmpeg-binaries` exports a string containing the path to the FFmpeg executable.

@@ -1,21 +1,17 @@
-const { get } = require('https');
+const { createWriteStream, mkdirSync, existsSync } = require('fs');
 const { cursorTo } = require('readline');
-const decompress = require('decompress');
-const tarxz = require('decompress-tarxz');
-const unzip = require('decompress-unzip');
+const { get } = require('https');
+const unzip = require('unzip');
+const path = require('path');
+const tar = require('tar');
+const xz = require('xz');
 
 function callback(res) {
   let last;
   let complete = 0;
   const total = parseInt(res.headers['content-length'], 10);
 
-  let index = 0;
-  const buf = Buffer.alloc(total);
-
   res.on('data', (chunk) => {
-    chunk.copy(buf, index);
-    index += chunk.length;
-
     complete += chunk.length;
     const progress = Math.round((complete / total) * 20);
 
@@ -31,13 +27,30 @@ function callback(res) {
   res.on('end', () => {
     cursorTo(process.stdout, 0, null);
     console.log(`Downloading binary: [${'='.repeat(20)}] 100%`);
-
-    decompress(buf, 'bin', {
-      plugins: process.platform === 'linux' ? [tarxz()] : [unzip()],
-      strip: process.platform === 'linux' ? 1 : 2,
-      filter: x => x.path === (process.platform === 'win32' ? 'ffmpeg.exe' : 'ffmpeg'),
-    });
   });
+
+  const targetDir = path.resolve(__dirname, 'bin/')
+  if(!existsSync(targetDir)) mkdirSync(targetDir)
+
+  if (process.platform === 'linux') {
+    // tarXZ
+    res.pipe(new xz.Decompressor()).pipe(
+      tar.extract({
+        cwd: targetDir,
+        strip: 1,
+        filter: filePath => ['ffmpeg', 'ffprobe'].includes(path.basename(filePath))
+      })
+    );
+  } else {
+    // unzip
+    res.pipe(unzip.Parse()).on('entry', entry => {
+      const bName = path.basename(entry.path);
+      const fName = bName.substr(0, bName.length - path.extname(entry.path).length)
+      if (!['ffmpeg', 'ffprobe', 'ffplay'].includes(fName)) return entry.autodrain()
+      if (!['.exe', ''].includes(path.extname(entry.path))) return entry.autodrain()
+      entry.pipe(createWriteStream(path.resolve(targetDir, bName)))
+    });
+  }
 }
 
 if (process.platform === 'win32') {
@@ -54,16 +67,16 @@ if (process.platform === 'win32') {
 } else if (process.platform === 'linux') {
   switch (process.arch) {
     case 'x64':
-      get('https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-64bit-static.tar.xz', callback);
+      get('https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-amd64-static.tar.xz', callback);
       break;
     case 'ia32':
-      get('https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-32bit-static.tar.xz', callback);
+      get('https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-32bit-static.tar.xz', callback);
       break;
     case 'arm':
-      get('https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-armhf-32bit-static.tar.xz', callback);
+      get('https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-armhf-static.tar.xz', callback);
       break;
     case 'arm64':
-      get('https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-arm64-64bit-static.tar.xz', callback);
+      get('https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-arm64-static.tar.xz', callback);
       break;
     default:
       throw new Error('unsupported platform');
