@@ -31,12 +31,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TimeForANinja/node-ffmpeg.bin.git"
+    "url": "git+https://github.com/TimeForANinja/node-ff.bin.git"
   },
   "bugs": {
-    "url": "https://github.com/TimeForANinja/node-ffmpeg.bin/issues"
+    "url": "https://github.com/TimeForANinja/node-ff.bin/issues"
   },
-  "homepage": "https://github.com/TimeForANinja/node-ffmpeg.bin#readme",
+  "homepage": "https://github.com/TimeForANinja/node-ff.bin#readme",
   "license": "MIT",
   "eslintConfig": {
     "extends": "airbnb-base"
