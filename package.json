@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "ffmpeg binaries",
   "main": "index.js",
+  "types": "./typings/index.d.ts",
   "author": "Tobias Kutscha (https://github.com/TimeForANinja)",
   "scripts": {
     "test": "eslint *.js",
