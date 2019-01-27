@@ -4,7 +4,7 @@ const { get } = require('https');
 const unzip = require('unzip');
 const path = require('path');
 const tar = require('tar');
-const xz = require('xz');
+const lzma = require('lzma-native');
 
 function callback(res) {
   let last;
@@ -33,8 +33,8 @@ function callback(res) {
   if (!existsSync(targetDir)) mkdirSync(targetDir);
 
   if (process.platform === 'linux') {
-    // tarXZ
-    res.pipe(new xz.Decompressor()).pipe(tar.extract({
+    // tarxz
+    res.pipe(new lzma.Decompressor()).pipe(tar.extract({
       cwd: targetDir,
       strip: 1,
       filter: filePath => ['ffmpeg', 'ffprobe'].includes(path.basename(filePath)),

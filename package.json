@@ -21,9 +21,9 @@
     "binaries"
   ],
   "dependencies": {
+    "lzma-native": "^4.0.3",
     "tar": "^4.4.8",
-    "unzip": "^0.1.11",
-    "xz": "^2.0.0"
+    "unzip": "^0.1.11"
   },
   "devDependencies": {
     "eslint": "^5.12.0",
