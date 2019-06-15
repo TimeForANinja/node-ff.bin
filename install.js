@@ -1,7 +1,7 @@
 const { createWriteStream, mkdirSync, existsSync } = require('fs');
 const { cursorTo } = require('readline');
 const { get } = require('https');
-const unzip = require('unzip');
+const unzip = require('unzipper');
 const path = require('path');
 const tar = require('tar');
 const lzma = require('lzma-native');
