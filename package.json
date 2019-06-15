@@ -1,6 +1,6 @@
 {
   "name": "ff.bin",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "ffmpeg binaries",
   "main": "index.js",
   "types": "./typings/index.d.ts",
