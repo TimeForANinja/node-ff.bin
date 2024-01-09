@@ -1,3 +1,7 @@
+# DEPRECATED <ff-bin>
+
+This repo is no longer supported, please consider using https://www.npmjs.com/package/ffmpeg-static instead.
+
 # node-ff.bin
 A platform independent installer of [FFmpeg](https://ffmpeg.org/).  
 Based on [node-ffmpeg-binaries](https://github.com/Hackzzila/node-ffmpeg-binaries).
